@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 10 15:27:20 2025
-
-@author: k_wan
-"""
-
 import torch
 import torch.utils.cpp_extension
 import os
@@ -81,12 +74,22 @@ t1 = time.perf_counter_ns()
 print((t1-t0) / 10_000 / 1_000, "µs") 
 
 
+"""
 with torch.profiler.profile(on_trace_ready=torch.profiler.tensorboard_trace_handler('./log/schedule'),
-        record_shapes=True,
-        profile_memory=True,
-        with_stack=True) as prof:
-    for i in range(10_000):
-        module.rgb_to_grayscale_out(out, t)
-        torch.cuda.synchronize()
+    record_shapes=True,
+    profile_memory=True,
+    with_stack=True) as prof:
+    #for i in range(10_000):
+    #    module.rgb_to_grayscale_out(out, t)
+    #torch.cuda.synchronize()
+    module.rgb_to_grayscale_out(out, t)
+    torch.cuda.synchronize()
 
 print(prof.key_averages().table())
+"""
+
+with torch.profiler.profile() as prof:
+    #module.rgb_to_grayscale_out(out, t)
+    torch.square(torch.tensor([1., 2., 3.]))
+
+print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
